@@ -20,6 +20,9 @@ sudo systemctl enable docker
 echo "Adding user to docker group..."
 sudo usermod -aG docker $USER
 
+# Apply group changes
+newgrp docker <<EOF
+
 # Install Kubectl
 echo "Installing kubectl..."
 sudo apt-get update -y
@@ -41,5 +44,7 @@ minikube start --driver=docker
 # Verify installation
 echo "Verifying Minikube installation..."
 minikube status
+
+EOF
 
 echo "Minikube installation completed successfully!"
