@@ -1,45 +1,34 @@
 #!/bin/bash
 
-# Update system packages
-echo "Updating system packages..."
-sudo apt update && sudo apt upgrade -y
+# Update package lists
+sudo apt update
 
-# Install Java (OpenJDK 11)
-echo "Installing OpenJDK 11..."
+# Install OpenJDK 11
 sudo apt install openjdk-11-jdk -y
 
-# Verify Java installation
-echo "Verifying Java installation..."
-java -version
+# Add Jenkins repository key
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null
 
-# Add Jenkins GPG key
-echo "Adding Jenkins GPG key..."
-curl -fsSL https://pkg.jenkins.io/debian/jenkins.io-2023.key | sudo tee \
-/usr/share/keyrings/jenkins-keyring.asc > /dev/null
+# Add Jenkins repository to sources list
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
 
-# Add Jenkins repository
-echo "Adding Jenkins repository..."
-echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
-https://pkg.jenkins.io/debian binary/ | sudo tee \
-/etc/apt/sources.list.d/jenkins.list > /dev/null
-
-# Update packages and install Jenkins
-echo "Updating package list and installing Jenkins..."
+# Update package lists again
 sudo apt update
+
+# Install Jenkins
 sudo apt install jenkins -y
 
-# Start and enable Jenkins service
-echo "Starting and enabling Jenkins service..."
-sudo systemctl start jenkins
-sudo systemctl enable jenkins
+# Check Jenkins service status
+sudo systemctl status jenkins
 
-# Open port 8080 in the firewall (optional)
-echo "Configuring firewall for Jenkins (port 8080)..."
+# Allow Jenkins port 8080 through firewall
 sudo ufw allow 8080
-sudo ufw reload
+
+# Check firewall status
+sudo ufw status
+
+# Enable UFW
+sudo ufw enable -y
 
 # Display Jenkins initial admin password
-echo "Jenkins initialAdminPassword:"
 sudo cat /var/lib/jenkins/secrets/initialAdminPassword
-
-echo "Jenkins installation complete. Access it at http://your_server_ip_or_domain:8080"
