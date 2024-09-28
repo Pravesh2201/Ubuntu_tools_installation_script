@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Add Ansible PPA repository
-sudo apt-add-repository ppa:ansible/ansible
+# Add Ansible PPA repository (automatically confirm)
+sudo apt-add-repository -y ppa:ansible/ansible
 
 # Update package lists
 sudo apt update
