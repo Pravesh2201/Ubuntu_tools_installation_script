@@ -45,3 +45,5 @@ terraform --version
 
 # Clean up
 rm -f ${TERRAFORM_ZIP}
+
+sudo apt install awscli -y
