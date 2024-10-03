@@ -6,4 +6,6 @@
 ## Jenkins
 ## Minikibe_kubectl_docker
 ## Terraform
+## Awscli
+## Jenkins
 
