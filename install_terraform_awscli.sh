@@ -14,10 +14,10 @@ TERRAFORM_ZIP="terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
 wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/${TERRAFORM_ZIP}
 
 # Install required packages
-sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
+sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl
 
 # Add HashiCorp GPG key
-wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null
 
 # Verify the GPG key
 gpg --no-default-keyring --keyring /usr/share/keyrings/hashicorp-archive-keyring.gpg --fingerprint
@@ -37,13 +37,20 @@ terraform -help
 terraform -help plan
 
 # Enable auto-completion for Terraform
-touch ~/.bashrc
 terraform -install-autocomplete
 
 # Display the installed version of Terraform
 terraform --version
 
+# Install AWS CLI version 2
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
+# Verify AWS CLI installation
+aws --version
+
 # Clean up
 rm -f ${TERRAFORM_ZIP}
+rm -rf awscliv2.zip aws
 
-sudo apt install awscli -y
