@@ -1,155 +1,65 @@
-# #!/bin/bash
-
-# # Update the system
-# echo "Updating system..."
-# sudo apt update && sudo apt upgrade -y
-
-# # Install necessary dependencies
-# echo "Installing necessary packages..."
-# sudo apt install -y ca-certificates curl gnupg wget apt-transport-https
-
-# # Add Docker's official GPG key and repository
-# echo "Adding Docker's GPG key and repository..."
-# sudo install -m 0755 -d /etc/apt/keyrings
-# curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-# sudo chmod a+r /etc/apt/keyrings/docker.gpg
-# echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-# # Install Docker
-# echo "Installing Docker..."
-# sudo apt update
-# sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
-# # Add current user to the Docker group
-# echo "Adding user to Docker group..."
-# sudo usermod -aG docker $USER
-# newgrp docker
-
-# # Install Minikube
-# echo "Installing Minikube..."
-# curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-# sudo install minikube-linux-amd64 /usr/local/bin/minikube
-# minikube version
-
-# # Install Kubectl
-# echo "Installing Kubectl..."
-# curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
-# chmod +x kubectl
-# sudo mv kubectl /usr/local/bin/
-# kubectl version -o yaml
-
-# # Start Minikube with Docker driver
-# echo "Starting Minikube with Docker driver..."
-# minikube start --driver=docker
-
-# # Check Minikube status
-# echo "Checking Minikube status..."
-# minikube status
-
-# # Verify Kubernetes nodes
-# echo "Verifying Kubernetes nodes..."
-# kubectl get nodes
-
-# # Check Kubernetes cluster info
-# echo "Checking cluster information..."
-# kubectl cluster-info
-
-# # Enable Minikube addons
-# echo "Enabling Minikube addons..."
-# minikube addons enable dashboard
-# minikube addons enable ingress
-
-# # Open Minikube dashboard
-# echo "Opening Minikube dashboard..."
-# minikube dashboard &
-
 #!/bin/bash
 
-set -e
+# Update the system
+echo "Updating system..."
+sudo apt update && sudo apt upgrade -y
 
-LOG_FILE="setup.log"
+# Install necessary dependencies
+echo "Installing necessary packages..."
+sudo apt install -y ca-certificates curl gnupg wget apt-transport-https
 
-echo "===== Starting Setup =====" | tee -a $LOG_FILE
-
-# Update system
-
-echo "Updating system..." | tee -a $LOG_FILE
-sudo apt update -y
-
-# Install dependencies
-
-echo "Installing dependencies..." | tee -a $LOG_FILE
-sudo apt install -y ca-certificates curl gnupg wget apt-transport-https >> $LOG_FILE 2>&1
-
-# Add Docker GPG key & repo
-
-echo "Adding Docker repository..." | tee -a $LOG_FILE
+# Add Docker's official GPG key and repository
+echo "Adding Docker's GPG key and repository..."
 sudo install -m 0755 -d /etc/apt/keyrings
-
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | 
-sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 sudo chmod a+r /etc/apt/keyrings/docker.gpg
-
-echo 
-"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] 
-https://download.docker.com/linux/ubuntu 
-$(. /etc/os-release && echo "$VERSION_CODENAME") stable" 
-| sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 # Install Docker
+echo "Installing Docker..."
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
-echo "Installing Docker..." | tee -a $LOG_FILE
-sudo apt update -y
-sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin >> $LOG_FILE 2>&1
-
-# Start Docker
-
-echo "Starting Docker..." | tee -a $LOG_FILE
-sudo systemctl enable docker
-sudo systemctl start docker
-
-# Add user to Docker group
-
-echo "Configuring Docker permissions..." | tee -a $LOG_FILE
+# Add current user to the Docker group
+echo "Adding user to Docker group..."
 sudo usermod -aG docker $USER
-
-# Install kubectl (latest stable)
-
-echo "Installing kubectl..." | tee -a $LOG_FILE
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" >> $LOG_FILE 2>&1
-chmod +x kubectl
-sudo mv kubectl /usr/local/bin/
+newgrp docker
 
 # Install Minikube
-
-echo "Installing Minikube..." | tee -a $LOG_FILE
-curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 >> $LOG_FILE 2>&1
+echo "Installing Minikube..."
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
 sudo install minikube-linux-amd64 /usr/local/bin/minikube
+minikube version
 
-# Verify installations
+# Install Kubectl
+echo "Installing Kubectl..."
+curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/
+kubectl version -o yaml
 
-echo "Verifying installations..." | tee -a $LOG_FILE
-docker --version | tee -a $LOG_FILE
-kubectl version --client | tee -a $LOG_FILE
-minikube version | tee -a $LOG_FILE
+# Start Minikube with Docker driver
+echo "Starting Minikube with Docker driver..."
+minikube start --driver=docker
 
-# Start Minikube
+# Check Minikube status
+echo "Checking Minikube status..."
+minikube status
 
-echo "Starting Minikube..." | tee -a $LOG_FILE
-minikube start --driver=docker >> $LOG_FILE 2>&1
+# Verify Kubernetes nodes
+echo "Verifying Kubernetes nodes..."
+kubectl get nodes
 
-# Verify cluster
+# Check Kubernetes cluster info
+echo "Checking cluster information..."
+kubectl cluster-info
 
-echo "Checking cluster..." | tee -a $LOG_FILE
-kubectl get nodes | tee -a $LOG_FILE
-kubectl cluster-info | tee -a $LOG_FILE
+# Enable Minikube addons
+echo "Enabling Minikube addons..."
+minikube addons enable dashboard
+minikube addons enable ingress
 
-# Enable addons
+# Open Minikube dashboard
+echo "Opening Minikube dashboard..."
+minikube dashboard &
 
-echo "Enabling addons..." | tee -a $LOG_FILE
-minikube addons enable ingress >> $LOG_FILE 2>&1
-minikube addons enable dashboard >> $LOG_FILE 2>&1
-
-echo "===== Setup Completed Successfully =====" | tee -a $LOG_FILE
-echo "IMPORTANT: Run 'newgrp docker' OR logout/login to apply Docker permissions"
